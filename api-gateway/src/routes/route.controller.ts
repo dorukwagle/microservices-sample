@@ -1,5 +1,6 @@
 import {
   All,
+  BadGatewayException,
   Body,
   Controller,
   Headers,
@@ -39,7 +40,7 @@ export class RouteController {
   ) {
     const { serviceUrl, requiresAuth } = this.services[serviceApi[0]] || { serviceUrl: undefined, requiresAuth: false };
 
-    if (!serviceUrl) throw new NotFoundException('Service not found');
+    if (!serviceUrl) throw new BadGatewayException('Service not found');
 
     if (requiresAuth && !sessionHeader)
       throw new UnauthorizedException('Please Login First');

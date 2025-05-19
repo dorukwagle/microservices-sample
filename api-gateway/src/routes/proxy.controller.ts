@@ -26,7 +26,7 @@ export class ProxyController {
         if (!res.headersSent) {
           res.status(503).json({
             statusCode: 503,
-            message: 'MMS service currently unavailable',
+            message: 'Service communication error. MMS service is currently unreachable',
             error: (err as any).code,
             timestamp: new Date(),
             path: req.originalUrl

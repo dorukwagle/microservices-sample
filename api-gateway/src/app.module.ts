@@ -1,7 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MmsProxyMiddleware } from './middlewares/mms-proxy.middleware';
 import { SessionMiddleware } from './middlewares/session.middleware';
 import { RoutesModule } from './routes/routes.module';
 import { LoggerModule } from './logger/logger.module';

@@ -6,6 +6,5 @@ import { ProxyController } from './proxy.controller';
 @Module({
   imports: [HttpModule],
   controllers: [ProxyController, RouteController],
-  // controllers: [RouteController, ProxyController]
 })
 export class RoutesModule {}
