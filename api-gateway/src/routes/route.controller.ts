@@ -11,14 +11,13 @@ import {
 } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { Request, Response } from 'express';
-import { firstValueFrom, from } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { LoggerService } from '../logger/logger.service';
 
-@Controller('/v1/:service')
+@Controller('/v1/*serviceApi')
 export class RouteController {
   constructor(
     private readonly httpService: HttpService,
-    private readonly logger: LoggerService,
   ) {}
 
   private readonly services: Record<
@@ -32,13 +31,13 @@ export class RouteController {
 
   @All()
   async forward(
-    @Param('service') service: string,
+    @Param('serviceApi') serviceApi: string,
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
     @Body() body: any,
     @Headers('x-session-header') sessionHeader: string,
   ) {
-    const { serviceUrl, requiresAuth } = this.services[service];
+    const { serviceUrl, requiresAuth } = this.services[serviceApi[0]] || { serviceUrl: undefined, requiresAuth: false };
 
     if (!serviceUrl) throw new NotFoundException('Service not found');
 
@@ -58,7 +57,12 @@ export class RouteController {
       params: req.query,
       validateStatus: () => true,
     };
-    console.log("sending request to service...", url);
-    return from(firstValueFrom(this.httpService.request(config)));
+    
+    const response = await firstValueFrom(this.httpService.request(config));
+    
+   res.status(response.status);
+   res.set(response.headers);
+
+   return response.data;
   }
 }

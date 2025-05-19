@@ -10,7 +10,6 @@ export class MmsProxyMiddleware implements NestMiddleware {
     pathRewrite: { '^/v1/mms': '/api/mms' },
     on: {
       proxyReq: (proxyReq, req, res) => {
-        console.log("proxy request received");
         if (req.headers['x-session-header']) {
           proxyReq.setHeader(
             'x-session-header',
@@ -23,6 +22,7 @@ export class MmsProxyMiddleware implements NestMiddleware {
 
   use(req: Request, res: Response, next: NextFunction) {
     console.log("proxy request received");
+    console.log("proxy middleware called...");
     this.proxy(req, res, next);
   }
 }

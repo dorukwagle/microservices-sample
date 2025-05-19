@@ -16,8 +16,9 @@ export class RoutesLoggerInterceptor implements NestInterceptor {
 
     const start = Date.now();
 
+    // receives the http response from other services
     return next.handle().pipe(
-      tap((data) => {
+      tap((serviceResponse) => {
         const duration = Date.now() - start;
         const statusCode = res.statusCode;
 
@@ -35,6 +36,8 @@ export class RoutesLoggerInterceptor implements NestInterceptor {
             'ms]' +
             '\x1b[0m',
         );
+
+        const data = serviceResponse?.data || serviceResponse;
         console.log('\x1b[36m\x1b[2m' + JSON.stringify(data) + '\x1b[0m');
       }),
     );
