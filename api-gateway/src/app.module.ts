@@ -3,11 +3,13 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { RoutesLoggerInterceptor } from './interceptors/routes-logger.interceptor';
-import { FileProxyMiddleware } from './middlewares/file-proxy.middleware';
+import { MmsProxyMiddleware } from './middlewares/mms-proxy.middleware';
 import { SessionMiddleware } from './middlewares/session.middleware';
+import { RoutesModule } from './routes/routes.module';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
-  imports: [],
+  imports: [RoutesModule, LoggerModule],
   controllers: [AppController],
   providers: [
     AppService,
@@ -19,8 +21,8 @@ import { SessionMiddleware } from './middlewares/session.middleware';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(SessionMiddleware).forRoutes('*');
+    consumer.apply(SessionMiddleware).forRoutes('*path');
 
-    consumer.apply(FileProxyMiddleware).forRoutes('/v1/files/(.*)');
+    consumer.apply(MmsProxyMiddleware).forRoutes('/v1/mms/*path');
   }
 }

@@ -3,13 +3,14 @@ import { createProxyMiddleware } from 'http-proxy-middleware';
 import { Request, Response, NextFunction } from 'express';
 
 @Injectable()
-export class FileProxyMiddleware implements NestMiddleware {
+export class MmsProxyMiddleware implements NestMiddleware {
   private proxy = createProxyMiddleware({
-    target: 'http://localhost:3004', // file service
+    target: process.env.MMS_SERVICE, // file service
     changeOrigin: true,
-    pathRewrite: { '^/v1/files': '/api/files' },
+    pathRewrite: { '^/v1/mms': '/api/mms' },
     on: {
       proxyReq: (proxyReq, req, res) => {
+        console.log("proxy request received");
         if (req.headers['x-session-header']) {
           proxyReq.setHeader(
             'x-session-header',
@@ -21,6 +22,7 @@ export class FileProxyMiddleware implements NestMiddleware {
   });
 
   use(req: Request, res: Response, next: NextFunction) {
+    console.log("proxy request received");
     this.proxy(req, res, next);
   }
 }

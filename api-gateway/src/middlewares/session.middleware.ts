@@ -13,8 +13,7 @@ export class SessionMiddleware implements NestMiddleware {
 
     const sessionToken = sessionCookie || bearerToken;
 
-    if (!sessionToken)
-      return next();
+    if (!sessionToken) return next();
 
     const session = await new PrismaClient().sessions.findUnique({
       where: {
@@ -30,15 +29,12 @@ export class SessionMiddleware implements NestMiddleware {
       },
     });
 
-    if (!session)
-      return next();
-    
-      // Base64 encode user session info
-        const payload = Buffer.from(
-          JSON.stringify(session),
-        ).toString('base64');
+    if (!session) return next();
 
-        req.headers['x-session-header'] = payload;
+    // Base64 encode user session info
+    const payload = Buffer.from(JSON.stringify(session)).toString('base64');
+
+    req.headers['x-session-header'] = payload;
 
     next();
   }
