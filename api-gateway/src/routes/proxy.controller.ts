@@ -1,7 +1,6 @@
-import { All, Controller, Next, Req, Res, ServiceUnavailableException } from "@nestjs/common";
-import { NextFunction, Request, Response } from "express";
-import { createProxyMiddleware } from "http-proxy-middleware";
-
+import { All, Controller, Next, Req, Res } from '@nestjs/common';
+import { NextFunction, Request, Response } from 'express';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 @Controller('/v1/mms')
 export class ProxyController {
@@ -26,14 +25,15 @@ export class ProxyController {
         if (!res.headersSent) {
           res.status(503).json({
             statusCode: 503,
-            message: 'Service communication error. MMS service is currently unreachable',
+            message:
+              'Service communication error. MMS service is currently unreachable',
             error: (err as any).code,
             timestamp: new Date(),
-            path: req.originalUrl
+            path: req.originalUrl,
           });
         }
       },
-}
+    },
   });
 
   @All()
