@@ -5,6 +5,8 @@ import { Injectable } from "@nestjs/common";
 export class SmsService {
     async sendSms(to: string, message: string) {
         console.log('Sending SMS to', to, 'with message', message);
-        return;
+        return {
+            statusCode: 200
+        };
     }
 }

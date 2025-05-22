@@ -18,6 +18,12 @@ export enum templateType {
   UNRECOGNIZED = -1,
 }
 
+export interface Otp {
+  id: string;
+  sentTo: string;
+  otp: string;
+}
+
 export interface To {
   email: string;
   name: string;
@@ -48,41 +54,48 @@ export interface VerifyOtpRequest {
   code: string;
 }
 
-export interface SendResponse {
-  success: boolean;
-  message: string;
+export interface GenerateOtpResponse {
+  otp: number;
 }
 
 export interface VerifyOtpResponse {
-  valid: boolean;
-  message: string;
+  otpRecord?: Otp | undefined;
+  invalid?: boolean | undefined;
+}
+
+export interface SendMailResponse {
+  statusCode: number;
+}
+
+export interface SendSmsResponse {
+  statusCode: number;
 }
 
 export const UTILITY_PACKAGE_NAME = "utility";
 
 export interface UtilityServiceClient {
-  sendEmail(request: SendEmailRequest): Observable<SendResponse>;
+  sendEmail(request: SendEmailRequest): Observable<SendMailResponse>;
 
-  sendSms(request: SendSmsRequest): Observable<SendResponse>;
+  sendSms(request: SendSmsRequest): Observable<SendSmsResponse>;
 
-  sendOtp(request: OtpRequest): Observable<SendResponse>;
+  createOtp(request: OtpRequest): Observable<GenerateOtpResponse>;
 
   verifyOtp(request: VerifyOtpRequest): Observable<VerifyOtpResponse>;
 }
 
 export interface UtilityServiceController {
-  sendEmail(request: SendEmailRequest): Promise<SendResponse> | Observable<SendResponse> | SendResponse;
+  sendEmail(request: SendEmailRequest): Promise<SendMailResponse> | Observable<SendMailResponse> | SendMailResponse;
 
-  sendSms(request: SendSmsRequest): Promise<SendResponse> | Observable<SendResponse> | SendResponse;
+  sendSms(request: SendSmsRequest): Promise<SendSmsResponse> | Observable<SendSmsResponse> | SendSmsResponse;
 
-  sendOtp(request: OtpRequest): Promise<SendResponse> | Observable<SendResponse> | SendResponse;
+  createOtp(request: OtpRequest): Promise<GenerateOtpResponse> | Observable<GenerateOtpResponse> | GenerateOtpResponse;
 
   verifyOtp(request: VerifyOtpRequest): Promise<VerifyOtpResponse> | Observable<VerifyOtpResponse> | VerifyOtpResponse;
 }
 
 export function UtilityServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["sendEmail", "sendSms", "sendOtp", "verifyOtp"];
+    const grpcMethods: string[] = ["sendEmail", "sendSms", "createOtp", "verifyOtp"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("UtilityService", method)(constructor.prototype[method], method, descriptor);

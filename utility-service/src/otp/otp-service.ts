@@ -15,7 +15,9 @@ export class OtpService {
       },
     });
 
-    return otp;
+    return {
+      otp
+    };
   }
 
   async verifyOtp(sentTo: string, otp: string) {
@@ -29,7 +31,11 @@ export class OtpService {
       },
     });
 
-    if (!otpRecord) return null;
+    if (!otpRecord) {
+      return {
+        invalid: true
+      };
+    };
 
     await this.prisma.otps.delete({
       where: {
@@ -37,6 +43,8 @@ export class OtpService {
       },
     });
 
-    return otpRecord;
+    return {
+      otpRecord
+    };
   }
 }

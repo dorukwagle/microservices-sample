@@ -81,9 +81,12 @@ export class MailService {
 
   async sendMail(to: To, subject: string, {template: type, data}: MailContent) {
     const template = await this.createTemplate(type, data);
-    return fetch(
+    const res = await fetch(
       process.env.SENDCLEAN_APP_DOMAIN || '',
       this.getRequestOptions(to, subject, template) as any,
     );
+    return {
+      statusCode: res.status,
+    };
   }
 }
