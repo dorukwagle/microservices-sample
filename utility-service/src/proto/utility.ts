@@ -10,12 +10,16 @@ import { Observable } from "rxjs";
 
 export const protobufPackage = "utility";
 
-export enum templateType {
-  welcome = 0,
-  otp = 1,
-  reset = 2,
-  verify = 3,
-  UNRECOGNIZED = -1,
+export const templateType = { welcome: 0, otp: 1, reset: 2, verify: 3, UNRECOGNIZED: -1 } as const;
+
+export type templateType = typeof templateType[keyof typeof templateType];
+
+export namespace templateType {
+  export type welcome = typeof templateType.welcome;
+  export type otp = typeof templateType.otp;
+  export type reset = typeof templateType.reset;
+  export type verify = typeof templateType.verify;
+  export type UNRECOGNIZED = typeof templateType.UNRECOGNIZED;
 }
 
 export interface Otp {

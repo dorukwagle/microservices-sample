@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { promises as fs  } from 'fs';
+import { templateType } from 'src/proto/utility';
 
 interface To {
   email: string;
@@ -24,7 +25,8 @@ interface SendMailParameters {
   };
 }
 
-type templateType = 'welcome' | 'otp' | 'reset' | 'verify';
+// type templateType = 'welcome' | 'otp' | 'reset' | 'verify';
+const templates = ['welcome', 'otp', 'reset', 'verify'];
 
 interface MailContent {
     template: templateType;
@@ -35,7 +37,10 @@ interface MailContent {
 export class MailService {
 
     private async retrieveTemplate(templateType: templateType) {
-        return fs.readFile(`./templates/${templateType}.html`, 'utf-8');
+        if (templateType >= templates.length || templateType < 0)
+            throw new BadRequestException('Invalid template type');
+
+        return fs.readFile(`./templates/${templates[templateType]}.html`, 'utf-8');
     }
 
     private async createTemplate(templateType: templateType, data?: string[]) {
