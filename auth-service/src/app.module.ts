@@ -1,10 +1,20 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
+import { SharedModule } from './shared/shared.module';
+import { APP_GUARD } from '@nestjs/core';
+import { SessionAuthGuard } from './common/guards/session-auth.guard';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: SessionAuthGuard,
+    },
+  ],
+  imports: [
+    AuthModule,
+    SharedModule,
+  ],
 })
 export class AppModule {}
