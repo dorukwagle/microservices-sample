@@ -31,12 +31,14 @@ enum MultiAuth {
 }
 
 model Users {
-  userId String @id
+  userId String @id @default(cuid())
   username String @unique
   email String @unique
-  contact String @unique
+  contact String? @unique
   password String
   roles Json
+  emailVerified Boolean @default(false)
+  contactVerified Boolean @default(false)
   multiAuth MultiAuth @default(NONE)
   status AccountStatus @default(ACTIVE)
   createdAt DateTime @default(now()) @db.Timestamp(3)

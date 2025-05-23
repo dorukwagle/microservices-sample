@@ -24,13 +24,13 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Public } from './decorators/public.decorator';
+import { Public } from '@common/decorators/public.decorator';
 import { LoginDto } from './dto/login.dto';
 import { LoginErrorDto } from './dto/login-error.dto';
 import { extractDeviceInfo } from '../shared/utils/device-info.utils';
-import { UserResponseDto } from './dto/user-response.dto';
+import { UserResponseDto } from '../auth-crud/dto/user-response.dto';
 import { from } from 'rxjs';
-import { Session } from './decorators/session.decorator';
+import { Session } from '@common/decorators/session.decorator';
 import { MultiFactorToggleValidationPipe } from './pipes/multi-factor-toggle.pipe';
 import { MultiFactorToggleDto } from './dto/multi-factor-toggle.dto';
 import { ResetPasswordInitValidationPipe } from './pipes/reset-password-init.pipe';
@@ -40,7 +40,6 @@ import { ResetPasswordPipe } from './pipes/reset-password.pipe';
 import { SESSION_VALIDITY_MILLIS } from '../common/entities/constant';
 import { MultiFactor } from './multi-factor.service';
 import { Sessions, Users } from 'generated/prisma';
-
 
 export const sessionCookieOptions = {
   httpOnly: true,

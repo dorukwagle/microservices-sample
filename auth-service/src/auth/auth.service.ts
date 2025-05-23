@@ -13,15 +13,15 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 import { StateService } from '@shared/states/state-service';
 import { StateTokenType } from '../common/entities/state-types';
 import { PrismaService } from '@shared/utils/prisma.util';
-import { MultiAuth } from 'generated/prisma';
+import { MultiAuth, UserRole } from 'generated/prisma';
 import { SESSION_VALIDITY_MILLIS } from '../common/entities/constant';
 import { ClientGrpc } from '@nestjs/microservices';
 import { templateType, UtilityServiceClient } from 'src/proto/utility';
 import { firstValueFrom } from 'rxjs';
-
+import { CreateAuthDto } from '../auth-crud/dto/create-auth.dto';
 
 const getUserDetails = (userId: string) => {
-  console.log("auth.service.ts: 24", "yet to be implemented method");
+  console.log('auth.service.ts: 24', 'yet to be implemented method');
   return {
     emailVerified: true,
     contactVerified: true,
@@ -38,7 +38,38 @@ export class AuthService {
     private readonly stateService: StateService,
     @Inject('UTILITY_SERVICE') private readonly client: ClientGrpc,
   ) {
-    this.utilityService = this.client.getService<UtilityServiceClient>('UtilityService');
+    this.utilityService =
+      this.client.getService<UtilityServiceClient>('UtilityService');
+  }
+
+  async create(createUserDto: CreateAuthDto) {
+    const { username, email, contact, password } = createUserDto;
+
+    const existingUser = await this.prisma.users.findFirst({
+      where: {
+        OR: [{ username }, { email }, { contact }],
+      },
+    });
+
+    if (existingUser) {
+      const { username: u, email: e } = existingUser;
+      throw new BadRequestException(
+        `${username === u ? 'Username' : email === e ? 'Email' : 'Contact'} already taken`,
+      );
+    }
+
+    const hashedPassword = await hashPassword(password);
+
+    return this.prisma.users.create({
+      data: {
+        ...createUserDto,
+        password: hashedPassword,
+        roles: [UserRole.USER],
+      },
+      omit: {
+        password: true,
+      },
+    });
   }
 
   async login(credentials: LoginDto, deviceInfo: string) {
@@ -193,7 +224,9 @@ export class AuthService {
     if (!user)
       return { message: 'Password reset otp and link has been sent to you' };
 
-    const { otp } = await firstValueFrom(this.utilityService.createOtp({ sendTo: search }));
+    const { otp } = await firstValueFrom(
+      this.utilityService.createOtp({ sendTo: search }),
+    );
     const resetToken = await this.stateService.generateStateToken(
       {
         id: randomUUID(),
@@ -201,29 +234,33 @@ export class AuthService {
         type: StateTokenType.PASSWORD_RESET,
       },
       '5m',
-    ); // 5min expiration 
+    ); // 5min expiration
 
     // send otp, reset token & login token
     if (user.contact)
-      await firstValueFrom(this.utilityService.sendSms({
-        to: user.contact,
-        message: `Your OTP for password reset is: ${otp}. Please do not share this with anyone.`,
-      }));
+      await firstValueFrom(
+        this.utilityService.sendSms({
+          to: user.contact,
+          message: `Your OTP for password reset is: ${otp}. Please do not share this with anyone.`,
+        }),
+      );
 
-    await firstValueFrom(this.utilityService.sendEmail({
-      to: {
-        email: user.email,
-        name: user.username,
-      },
-      subject: 'Password Reset',
-      body:{
-        template: templateType.reset,
-        data: [
-          otp.toString(),
-          `${process.env.APP_DOMAIN}/api/auth/reset-password/token/${resetToken}`,
-        ],
-      },
-    }));
+    await firstValueFrom(
+      this.utilityService.sendEmail({
+        to: {
+          email: user.email,
+          name: user.username,
+        },
+        subject: 'Password Reset',
+        body: {
+          template: templateType.reset,
+          data: [
+            otp.toString(),
+            `${process.env.APP_DOMAIN}/api/auth/reset-password/token/${resetToken}`,
+          ],
+        },
+      }),
+    );
 
     return {
       message: 'Password reset otp and link has been sent to you',
@@ -231,9 +268,10 @@ export class AuthService {
   }
 
   async resetPasswordOtp({ search, otp, password }: ResetPasswordDto) {
-    const res = await firstValueFrom(this.utilityService.verifyOtp({ sendTo: search, code: otp }));
-    if (res.invalid)
-      throw new BadRequestException('Invalid OTP');
+    const res = await firstValueFrom(
+      this.utilityService.verifyOtp({ sendTo: search, code: otp }),
+    );
+    if (res.invalid) throw new BadRequestException('Invalid OTP');
 
     const user = await this.prisma.users.findFirst({
       where: {
