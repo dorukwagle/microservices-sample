@@ -3,9 +3,11 @@ CREATE TABLE `Users` (
     `userId` VARCHAR(191) NOT NULL,
     `username` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
-    `contact` VARCHAR(191) NOT NULL,
+    `contact` VARCHAR(191) NULL,
     `password` VARCHAR(191) NOT NULL,
     `roles` JSON NOT NULL,
+    `emailVerified` BOOLEAN NOT NULL DEFAULT false,
+    `contactVerified` BOOLEAN NOT NULL DEFAULT false,
     `multiAuth` ENUM('NONE', 'PHONE', 'EMAIL') NOT NULL DEFAULT 'NONE',
     `status` ENUM('ACTIVE', 'INACTIVE') NOT NULL DEFAULT 'ACTIVE',
     `createdAt` TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -22,7 +24,7 @@ CREATE TABLE `Users` (
 -- CreateTable
 CREATE TABLE `Sessions` (
     `id` VARCHAR(191) NOT NULL,
-    `sessionId` VARCHAR(191) NOT NULL,
+    `sessionToken` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
     `roles` JSON NOT NULL,
     `deviceInfo` VARCHAR(191) NOT NULL,
@@ -31,10 +33,10 @@ CREATE TABLE `Sessions` (
     `deletedAt` DATETIME(3) NULL,
     `expiresAt` TIMESTAMP(3) NOT NULL,
 
-    UNIQUE INDEX `Sessions_sessionId_key`(`sessionId`),
-    INDEX `Sessions_sessionId_idx`(`sessionId`),
+    UNIQUE INDEX `Sessions_sessionToken_key`(`sessionToken`),
+    INDEX `Sessions_sessionToken_idx`(`sessionToken`),
     INDEX `Sessions_userId_idx`(`userId`),
-    INDEX `Sessions_userId_sessionId_idx`(`userId`, `sessionId`),
+    INDEX `Sessions_userId_sessionToken_idx`(`userId`, `sessionToken`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

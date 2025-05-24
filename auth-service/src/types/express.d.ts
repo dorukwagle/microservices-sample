@@ -2,6 +2,6 @@ import { Sessions } from "generated/prisma";
 
 declare module 'express' {
     interface Request {
-        session?: Sessions
+        session?: Pick<Sessions, 'userId' | 'sessionToken' | 'roles'>
     }
 }

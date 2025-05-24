@@ -51,7 +51,7 @@ model Users {
 
 model Sessions {
   id String @id @default(cuid())
-  sessionId String @unique
+  sessionToken String @unique
   userId String
   roles Json
   deviceInfo String
@@ -61,9 +61,9 @@ model Sessions {
   deletedAt DateTime?
   expiresAt DateTime @db.Timestamp(3)
 
-  @@index([sessionId])
+  @@index([sessionToken])
   @@index([userId])
-  @@index([userId, sessionId])
+  @@index([userId, sessionToken])
 }
 
 model BiometricKeys {
