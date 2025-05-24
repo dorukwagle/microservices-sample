@@ -21,7 +21,7 @@ export class MultiFactor {
   }
 
   async init(user: Users, tempSession: Sessions, authType: MultiAuth) {
-    const {otp} = await firstValueFrom(this.utilityService.createOtp({sendTo: user.contact}));
+    const {otp} = await firstValueFrom(this.utilityService.createOtp({sendTo: user.contact || ''}));
 
     const authToken = this.stateService.generateStateToken({
       id: tempSession.id,
@@ -60,7 +60,7 @@ export class MultiFactor {
     const user = await this.prisma.users.findUnique({ where: { userId: state.userId } });
     if (!user) throw new BadRequestException('User not found');
 
-    const {invalid} = await firstValueFrom(this.utilityService.verifyOtp({sendTo: user.contact, code: otp}));
+    const {invalid} = await firstValueFrom(this.utilityService.verifyOtp({sendTo: user.contact || '', code: otp}));
     if (invalid) throw new BadRequestException('Invalid OTP');
 
     return {...user, state };
