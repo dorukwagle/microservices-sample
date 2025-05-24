@@ -3,6 +3,8 @@ import { AuthCrudController } from "./auth-crud.controller";
 import { AuthCrudService } from "./auth-crud.service";
 import { ClientsModule, Transport } from "@nestjs/microservices";
 import { join } from "path";
+import { AuthCrudGrpcController } from "./auth-crud.grpc.controller";
+import { AuthCrudGrpcService } from "./auth-crud.grpc.service";
 
 @Module({
   imports: [
@@ -27,7 +29,7 @@ import { join } from "path";
       },
     ]),
   ],
-  controllers: [AuthCrudController],
-  providers: [AuthCrudService],
+  controllers: [AuthCrudController, AuthCrudGrpcController],
+  providers: [AuthCrudService, AuthCrudGrpcService],
 })
 export class AuthCrudModule {}
