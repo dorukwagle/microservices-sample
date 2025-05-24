@@ -5,17 +5,28 @@ import { ClientsModule, Transport } from "@nestjs/microservices";
 import { join } from "path";
 
 @Module({
-  imports: [ClientsModule.register([
-    {
-      name: 'UTILITY_SERVICE',
-      transport: Transport.GRPC,
-      options: {
-        package: 'utility',
-        protoPath: join(__dirname, '../../../proto/utility.proto'),
-        url: process.env.UTILITY_SERVICE_URL,
+  imports: [
+    ClientsModule.register([
+      {
+        name: 'UTILITY_SERVICE',
+        transport: Transport.GRPC,
+        options: {
+          package: 'utility',
+          protoPath: join(__dirname, '../../../proto/utility.proto'),
+          url: process.env.UTILITY_SERVICE_URL,
+        },
       },
-    },
-  ])],
+      {
+        name: 'USERS_SERVICE',
+        transport: Transport.GRPC,
+        options: {
+          package: 'users',
+          protoPath: join(__dirname, '../../../proto/users.proto'),
+          url: process.env.USERS_SERVICE_URL,
+        },
+      },
+    ]),
+  ],
   controllers: [AuthCrudController],
   providers: [AuthCrudService],
 })

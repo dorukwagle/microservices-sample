@@ -20,14 +20,6 @@ import { templateType, UtilityServiceClient } from 'src/proto/utility';
 import { firstValueFrom } from 'rxjs';
 import { CreateAuthDto } from '../auth-crud/dto/create-auth.dto';
 
-const getUserDetails = (userId: string) => {
-  console.log('auth.service.ts: 24', 'yet to be implemented method');
-  return {
-    emailVerified: true,
-    contactVerified: true,
-    contact: '353454353',
-  };
-};
 
 @Injectable()
 export class AuthService {
@@ -191,7 +183,16 @@ export class AuthService {
   }
 
   async multiFactorToggle(userId: string, authType: MultiAuth) {
-    const user = await getUserDetails(userId);
+    const user = await this.prisma.users.findUnique({
+      where: {
+        userId,
+      },
+      select: {
+        contact: true,
+        contactVerified: true,
+        emailVerified: true,
+      },
+    });
     if (!user) throw new UnauthorizedException('User not found');
 
     if (authType === 'PHONE' && !(user.contact && user.contactVerified))

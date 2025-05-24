@@ -11,18 +11,21 @@ import { ExpiredOrInvalidStateTokenException } from '@common/exceptions/invalid-
 import { StateTokenType } from '@common/entities/state-types';
 import { randomUUID } from 'node:crypto';
 import { StateService } from '@shared/states/state-service';
+import { UsersServiceClient } from 'src/proto/users';
 
 @Injectable()
 export class AuthCrudService {
   private readonly utilityService: UtilityServiceClient;
+  private readonly usersService: UsersServiceClient;
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly stateService: StateService,
     @Inject('UTILITY_SERVICE') private readonly client: ClientGrpc,
+    @Inject('USERS_SERVICE') private readonly usersClient: ClientGrpc,
   ) {
-    this.utilityService =
-      this.client.getService<UtilityServiceClient>('UtilityService');
+    this.utilityService = this.client.getService<UtilityServiceClient>('UtilityService');
+    this.usersService = this.usersClient.getService<UsersServiceClient>('UsersService');
   }
 
   async create(createUserDto: CreateAuthDto) {
@@ -43,7 +46,7 @@ export class AuthCrudService {
 
     const hashedPassword = await hashPassword(password);
 
-    return this.prisma.users.create({
+    const user = await this.prisma.users.create({
       data: {
         ...createUserDto,
         password: hashedPassword,
@@ -53,6 +56,11 @@ export class AuthCrudService {
         password: true,
       },
     });
+
+    // call users service to register userId in user profile
+    await firstValueFrom(this.usersService.registerUserProfile({userId: user.userId}));
+
+    return user;
   }
 
   async verifyEmailInitiate(userId: string) {
