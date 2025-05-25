@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package auth;
+
+import "google/protobuf/timestamp.proto";
+
+service AuthService {
+  rpc GetAuthInfo(GetAuthInfoRequest) returns (GetAuthInfoResponse);
+}
+
+enum UserRole {
+  UNSET = 0;
+  ADMIN = 1;
+  USER = 2;
+}
+
+enum AccountStatus {
+  ACTIVE = 0;
+  INACTIVE = 1;
+}
+
+enum MultiAuth {
+  NONE = 0;
+  PHONE = 1;
+  EMAIL = 2;
+}
+
+message User {
+  string userId = 1;
+  string username = 2;
+  string email = 3;
+  optional string contact = 4;
+  repeated UserRole roles = 5;
+  bool emailVerified = 6;
+  bool contactVerified = 7;
+  MultiAuth multiAuth = 8;
+  AccountStatus status = 9;
+  google.protobuf.Timestamp createdAt = 10;
+  google.protobuf.Timestamp updatedAt = 11;
+}
+
+message GetAuthInfoRequest {
+  string userId = 1;
+}
+
+message GetAuthInfoResponse {
+  User user = 1;
+}

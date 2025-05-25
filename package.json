@@ -2,9 +2,14 @@
   "name": "my-app",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"npm run start:dev --prefix api-gateway\" \"npm run start:dev --prefix users-service\" \"npm run start:dev --prefix auth-service\""
+    "dev": "concurrently \"npm run start:dev --prefix api-gateway\" \"npm run start:dev --prefix users-service\" \"npm run start:dev --prefix auth-service\" \"npm run start:dev --prefix mms-service\" \"npm run start:dev --prefix utility-service\""
   },
   "devDependencies": {
     "concurrently": "^9.1.2"
+  },
+  "dependencies": {
+    "@nestjs/mapped-types": "*",
+    "http-proxy": "^1.18.1",
+    "http-proxy-middleware": "^3.0.5"
   }
 }

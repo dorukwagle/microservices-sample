@@ -11,24 +11,24 @@ import { Observable } from "rxjs";
 export const protobufPackage = "users";
 
 /** Keeping these for future use when implementing profile updates */
-export const UserRole = { USER: 0, ADMIN: 1, UNRECOGNIZED: -1 } as const;
+export const UserRole = { UNKNOWN: 0, ADMIN: 1, USER: 2, UNRECOGNIZED: -1 } as const;
 
 export type UserRole = typeof UserRole[keyof typeof UserRole];
 
 export namespace UserRole {
-  export type USER = typeof UserRole.USER;
+  export type UNKNOWN = typeof UserRole.UNKNOWN;
   export type ADMIN = typeof UserRole.ADMIN;
+  export type USER = typeof UserRole.USER;
   export type UNRECOGNIZED = typeof UserRole.UNRECOGNIZED;
 }
 
-export const AccountStatus = { ACTIVE: 0, INACTIVE: 1, DISABLED: 2, UNRECOGNIZED: -1 } as const;
+export const AccountStatus = { ACTIVE: 0, INACTIVE: 1, UNRECOGNIZED: -1 } as const;
 
 export type AccountStatus = typeof AccountStatus[keyof typeof AccountStatus];
 
 export namespace AccountStatus {
   export type ACTIVE = typeof AccountStatus.ACTIVE;
   export type INACTIVE = typeof AccountStatus.INACTIVE;
-  export type DISABLED = typeof AccountStatus.DISABLED;
   export type UNRECOGNIZED = typeof AccountStatus.UNRECOGNIZED;
 }
 

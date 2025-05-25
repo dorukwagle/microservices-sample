@@ -11,11 +11,12 @@ import { Timestamp } from "./google/protobuf/timestamp";
 
 export const protobufPackage = "auth";
 
-export const UserRole = { ADMIN: 0, USER: 1, UNRECOGNIZED: -1 } as const;
+export const UserRole = { UNSET: 0, ADMIN: 1, USER: 2, UNRECOGNIZED: -1 } as const;
 
 export type UserRole = typeof UserRole[keyof typeof UserRole];
 
 export namespace UserRole {
+  export type UNSET = typeof UserRole.UNSET;
   export type ADMIN = typeof UserRole.ADMIN;
   export type USER = typeof UserRole.USER;
   export type UNRECOGNIZED = typeof UserRole.UNRECOGNIZED;
