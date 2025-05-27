@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
-import { UsersGrpcController } from './users.grpc.controller';
-import { UsersGrpcService } from './users.grpc.service';
+import { UsersMicroController } from './users.micro.controller';
+import { UsersMicroService } from './users.micro.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { join } from 'path';
 
 @Module({
-  controllers: [UsersController, UsersGrpcController],
-  providers: [UsersService, UsersGrpcService],
+  controllers: [UsersController, UsersMicroController],
+  providers: [UsersService, UsersMicroService],
   imports: [
     ClientsModule.register([
       {
@@ -21,6 +21,6 @@ import { join } from 'path';
         },
       },
     ]),
-  ]
+  ],
 })
 export class UsersModule {}

@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "@shared/utils/prisma.util";
 
 @Injectable()
-export class UsersGrpcService {
+export class UsersMicroService {
     constructor(private readonly prisma: PrismaService) {}
 
     async registerUserProfile(userId: string) {
@@ -22,5 +22,20 @@ export class UsersGrpcService {
                 userId,
             },
         });
+    }
+
+    async updateProfilePicture(userId: string, imageUrl: string) {
+        await this.prisma.users.update({
+            where: {
+                userId,
+            },
+            data: {
+                profileImage: imageUrl,
+            },
+        });
+
+        return {
+            statusCode: 200,
+        }
     }
 }

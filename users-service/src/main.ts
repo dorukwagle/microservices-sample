@@ -10,10 +10,23 @@ async function bootstrap() {
     transport: Transport.GRPC,
     options: {
       package: 'users',
-      protoPath: join(__dirname, '../../proto/users.proto'),
+      protoPath: join(__dirname, '../../../proto/users.proto'),
       url: '0.0.0.0:40020',
     },
   });
+
+  // rabbitmq microservice
+  app.connectMicroservice({
+    transport: Transport.RMQ,
+    options: {
+      urls: ['amqp://localhost:5672'],
+      queue: 'users_queue',
+      queueOptions: {
+        durable: false,
+      },
+    },
+  });
+
   app.startAllMicroservices();
 
   await app.listen(4002);
