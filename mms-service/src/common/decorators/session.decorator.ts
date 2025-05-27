@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { Sessions } from '@prisma/client';
+import Sessions from '../entities/sessions';
 
 export const Session = createParamDecorator(
   (data: keyof Sessions | undefined, ctx: ExecutionContext) => {

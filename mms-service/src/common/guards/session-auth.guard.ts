@@ -6,13 +6,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { PrismaService } from '@shared/utils/prisma.util';
 import { Request } from 'express';
 
 @Injectable()
 export class SessionAuthGuard implements CanActivate {
   constructor(
-    private prisma: PrismaService,
     private reflector: Reflector,
   ) {}
   private readonly loginMessage = 'Please login first';
@@ -26,25 +24,15 @@ export class SessionAuthGuard implements CanActivate {
 
     const request: Request = context.switchToHttp().getRequest();
 
-    const sessionId =
-      request.cookies?.sessionId || request.headers['x-session-id'];
+    const payload = request.headers['x-session-header'];
 
-    if (!sessionId || typeof sessionId !== 'string')
+    if (!payload || typeof payload !== 'string')
       throw new UnauthorizedException(this.loginMessage);
 
-    const session = await this.prisma.sessions.findUnique({
-      where: {
-        sessionId,
-        expiresAt: {
-          gte: new Date(),
-        },
-      },
-    });
-
-    if (!session) throw new UnauthorizedException(this.loginMessage);
-
     // Attach user to request object
-    request.session = session;
+    request.session = JSON.parse(
+      Buffer.from(payload, 'base64').toString('utf-8'),
+    );
 
     return true;
   }
