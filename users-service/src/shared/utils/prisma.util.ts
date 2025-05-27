@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from 'generated/prisma';
+import { PrismaClient } from '@generated/prisma';
 
 const databaseUrl: { [key: string]: string } = {
   production: process.env.PRODUCTION_DATABASE_URL || '',
