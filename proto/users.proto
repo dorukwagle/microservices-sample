@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package users;
+
+service UsersService {
+  rpc RegisterUserProfile(RegisterUserProfileRequest) returns (RegisterUserProfileResponse);
+  rpc GetProfileInfo(ProfileInfoRequest) returns (UserProfile);
+}
+
+message RegisterUserProfileRequest {
+  string userId = 1;
+}
+
+message RegisterUserProfileResponse {
+  int32 statusCode = 1;
+}
+
+enum AccountStatus {
+  ACTIVE = 0;
+  INACTIVE = 1;
+}
+
+message UserProfile {
+  string userId = 1;
+  string fullName = 2;
+  optional string profileImage = 3;
+}
+
+message ProfileInfoRequest {
+  string userId = 1;
+}
+
+message ErrorResponse {
+  string code = 1;
+  string message = 2;
+  map<string, string> details = 3;
+}
